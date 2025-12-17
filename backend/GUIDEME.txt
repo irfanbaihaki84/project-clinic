@@ -4,7 +4,9 @@ clinic management system
 
 nodejs, postgresql, sequelize dan docker
 
-# github user guide
+# BACKEND GUIDE
+
+## github user guide
 
 git clone <source>
 git status
@@ -12,6 +14,8 @@ git add .
 git commit -m "comments"
 git push origin main
 
+## npm installations
+
 npm init -y
-npm install express cors pg dotenv sequelize --save
-npm install nodemon --save-dev
+npm install express pg sequelize dotenv cors helmet express-rate-limit bcryptjs jsonwebtoken joi multer dayjs winston compression express-mongo-sanitize xss-clean hpp express-validator swagger-jsdoc swagger-ui-express redis node-cron --save
+npm install nodemon jest supertest eslint eslint-config-airbnb-base eslint-plugin-import prettier sequelize-cli --save-dev

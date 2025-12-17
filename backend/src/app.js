@@ -1,17 +1,41 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+
 const sequelize = require('./config/database');
 const patientRoutes = require('./routes/patientRoutes');
+const { testConnection } = require('./config/database');
+const { errorHandler } = require('./middleware/errorHandler');
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
-app.use(cors());
+// Security middleware
+app.use(helmet());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    credentials: true,
+  })
+);
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+});
+app.use('/api', limiter);
+
+// Body parser
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Test database connection
+testConnection();
 
 // Routes
 app.use('/api/patient', patientRoutes);
@@ -21,6 +45,19 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: 'Internal Server Error' });
 });
+
+// Health check
+app.get('/health', (req, res) => {
+  res.json({ status: 'OK', timestamp: new Date() });
+});
+
+// 404 handler
+app.use('*', (req, res) => {
+  res.status(404).json({ message: 'Route not found' });
+});
+
+// Error handler
+app.use(errorHandler);
 
 // Server and Database Initialization
 sequelize.sync().then(() => {
