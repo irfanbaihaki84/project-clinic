@@ -2,6 +2,8 @@
 
 clinic management system
 
+nodejs, postgresql, sequelize dan docker
+
 # github user guide
 
 git clone <source>
@@ -9,3 +11,7 @@ git status
 git add .
 git commit -m "comments"
 git push origin main
+
+npm init -y
+npm install express cors pg dotenv sequelize --save
+npm install nodemon --save-dev
